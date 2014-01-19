@@ -1,0 +1,51 @@
+diff --git a/pypacker/layer12/ieee8021q.py b/pypacker/layer12/ieee8021q.py
+new file mode 100644
+index 0000000..3322810
+--- /dev/null
++++ b/pypacker/layer12/ieee8021q.py
+@@ -0,0 +1,45 @@
++
++from pypacker import pypacker
++
++import logging
++logger = logging.getLogger("pypacker")
++
++IEEE8021Q_TYPE_PUP        = 0x0200 # PUP protocol
++IEEE8021Q_TYPE_IP         = 0x0800 # IP protocol
++IEEE8021Q_TYPE_ARP        = 0x0806 # address resolution protocol
++IEEE8021Q_TYPE_CDP        = 0x2000 # Cisco Discovery Protocol
++IEEE8021Q_TYPE_DTP        = 0x2004 # Cisco Dynamic Trunking Protocol
++IEEE8021Q_TYPE_REVARP     = 0x8035 # reverse addr resolution protocol
++IEEE8021Q_TYPE_8021Q      = 0x8100 # IEEE 802.1Q VLAN tagging
++IEEE8021Q_TYPE_IPX        = 0x8137 # Internetwork Packet Exchange
++IEEE8021Q_TYPE_IP6        = 0x86DD # IPv6 protocol
++IEEE8021Q_TYPE_PPP        = 0x880B # PPP
++IEEE8021Q_TYPE_MPLS       = 0x8847 # MPLS
++IEEE8021Q_TYPE_MPLS_MCAST = 0x8848 # MPLS Multicast
++IEEE8021Q_TYPE_PPPoE_DISC = 0x8863 # PPP Over Ethernet Discovery Stage
++IEEE8021Q_TYPE_PPPoE      = 0x8864 # PPP Over Ethernet Session Stage
++
++
++class IEEE8021Q(pypacker.Packet):
++    __hdr__ = (
++        ('tci', 'H', ''),
++        ('type','H', IEEE8021Q_TYPE_IP)
++        )
++
++	def __get_pcp(self):
++		return self.tci >> 13
++	def __set_pcp(self, value):
++		self.tci = (value << 13) | (self.tci & 0x1fff)
++	pcp = property(__get_pcp, __set_pcp)
++
++	def __get_cfi(self):
++		return self.tci & 0x1000
++	def __set_cfi(self, value):
++		self.tci = (value << 12) | (self.tci & 0xefff)
++	cfi = property(__get_cfi, __set_cfi)
++
++	def __get_vid(self):
++		return self.tci & 0x0fff
++	def __set_vid(self, value):
++		self.tci = (value) | (self.tci & 0xf000)
++	vid = property(__get_vid, __set_vid)
