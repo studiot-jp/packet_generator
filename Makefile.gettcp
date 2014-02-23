@@ -1,0 +1,15 @@
+CC=gcc
+.PHONY: all
+all: clean gettcp
+
+gettcp: gettcp.o
+	$(CC) -o $@ $< -L/usr/local/lib64 -lpython3.3m -lpthread -lm -lutil -ldl
+	#$(CC) -o $@ $< -L/usr/lib64/python2.6/config -lpython2.6 -lpthread -lm -lutil -ldl
+gettcp.o: gettcp.c
+	$(CC) -c $< -I/usr/local/include/python3.3m
+	#$(CC) -c $< -I/usr/include/python2.6
+
+.PHONY: clean
+clean:
+	rm -rf gettcp gettcp.o
+
